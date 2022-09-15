@@ -1,28 +1,29 @@
 import React, { useState } from "react";
 import "./styles.css";
 
-const CounterText = (props) => <p>現在のカウント数: {props.count}</p>;
-
-const INITIAL_COUNT = 0;
-const Counter = () => {
-  const [count, setCount] = useState(INITIAL_COUNT);
-
-  const countAdd = () => setCount((prevCount) => prevCount + 1);
-  const countSub = () => setCount((prevCount) => prevCount - 1);
-
-  const countReset = () => setCount(INITIAL_COUNT);
-
+const InputSelectBox = () => {
+  const [selectedValue, setSelectedValue] = useState('HTML');
+  
+  const handleChange = (event) => {
+    setSelectedValue(event.target.value);
+  };
+  
   return (
-    <>
-      <CounterText count={count} />
-
-      <button onClick={countAdd}>+1</button>
-      <button onClick={countSub}>-1</button>
-      <button onClick={countReset}>reset</button>
-    </>
+    <div className="App">
+      <p>
+        現在選択されている値：
+        <b>{selectedValue}</b>
+      </p>
+      <select value={selectedValue} onChange={handleChange}>
+        <option value="HTML">HTML</option>
+        <option value="CSS">CSS</option>
+        <option value="JavaScript">JavaScript</option>
+      </select>
+    </div>
   );
-};
+  
+}
 
 export default function App() {
-  return <Counter />;
+  return <InputSelectBox />;
 }
