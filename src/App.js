@@ -1,43 +1,33 @@
 import React, { useState } from "react";
 import "./styles.css";
 
-const InputSelectBox = () => {
-
-  const values = [
-    {id: 1, item: 'HTML'},
-    {id: 2, item: 'CSS'},
-    {id: 3, item: 'JavaScript'}
-  ];
-  
-  // これ自体はReactオブジェクト？ではない
-  // returnでReactオブジェクトを返す関数が関数コンポーネントになりうるのであって
-  // 帰ってきた結果自体はコンポーネントそのものではない
-  const SelectItems = values.map((value) => {
-    return (
-      <option key={value.id} value={value.item}>{value.item}</option>
-    );
-  });
-  
-  const [selectedValue, setSelectedValue] = useState(values[0].item);
-  
+const InputRadio = () => {
+  const [checkedValue, setCheckedValue] = useState('赤');
   const handleChange = (event) => {
-    setSelectedValue(event.target.value);
-  };
-   
+    setCheckedValue(event.target.value);
+  }
   return (
-    <div className="App">
+    <div class="App">
       <p>
-        現在選択されている値：
-        <b>{selectedValue}</b>
+        現在選択されている値: <b>{checkedValue}</b>
       </p>
-      <select value={selectedValue} onChange={handleChange}>
-        {SelectItems}
-      </select>
+      <label>
+        <input type="radio" value="赤" onChange={handleChange} checked={checkedValue === '赤'} />
+        赤
+      </label>
+      <label>
+        <input type="radio" value="青" onChange={handleChange} checked={checkedValue === '青'} />
+        青
+      </label>
+      <label>
+        <input type="radio" value="黄" onChange={handleChange} checked={checkedValue === '黄'} />
+        黄
+      </label>
     </div>
+
   );
-  
-}
+};
 
 export default function App() {
-  return <InputSelectBox />;
+  return <InputRadio />;
 }
