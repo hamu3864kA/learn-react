@@ -8,15 +8,16 @@ const values = [
 ];
 // 親コンポーネントから受け取る
 // これは関数コンポーネントだとすると12行目にreturnがないと動作しないのでは？=> その通り
-const RadioBtnItems = ({onChange, checked}) => {
-  return values.map((value) => {
+// 余計な{}が入っていた。{}がなければ（式だけなら）勝手にreturnされる。
+const RadioBtnItems = ({onChange, checked}) => 
+  values.map((value) => {
     return (
       <label key={value.id}>
         <input type="radio" value={value.item} onChange={onChange} checked={checked === value.item} />
       </label>
     );
   });
-}
+
 
 const InputRadio = () => {
 
