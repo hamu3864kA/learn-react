@@ -1,10 +1,13 @@
 import React, { useState } from "react";
 import "./styles.css";
+import Counter from './section26/Counter';
+import Hello from './section26/Hello';
 
-const INITIAL_COUNT = 0;
-const INITIAL_NAME = 'JavaScript';
+export default function App() {
 
-const SampleComponent = () => {
+  const INITIAL_COUNT = 0;
+  const INITIAL_NAME = 'JavaScript';
+
   const [count, setCount] = useState(INITIAL_COUNT);
   const [name, setName] = useState(INITIAL_NAME);
 
@@ -17,29 +20,21 @@ const SampleComponent = () => {
 
   return (
     <div className="App">
-      <p>
-        現在のカウント数: <b>{count}</b>
-        <br />
-        count の初期値: <b>{INITIAL_COUNT}</b>
-      </p>
-      <button onClick={countIncrement}>+</button>
-      <button onClick={countDecrement}>-</button>
-      <button onClick={countReset}>{INITIAL_COUNT}</button>
-
-      <p>
-        Hello, <b>{name} !!</b>
-        <br />
-        nameの初期値: <b>{INITIAL_NAME}</b>
-      </p>
-      <input type="text" onChange={handleChangeName} />
+      <p>ppp</p>
+      <Counter
+        count={count}
+        countIncrement={countIncrement}
+        countDecrement={countDecrement}
+        countReset={countReset}
+        initialCount={INITIAL_COUNT}
+      />
+      <Hello
+        name={name}
+        changeName={handleChangeName}
+        initialName={INITIAL_NAME}
+      />
     </div>
+    
   );
-};
 
-
-export default function App() {
-  return <>
-    <SampleComponent />
-    <SampleComponent />
-  </>
 }
