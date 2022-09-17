@@ -1,57 +1,45 @@
 import React, { useState } from "react";
 import "./styles.css";
 
-const values = [
-  {id: 1, item: 'マウス'},
-  {id: 2, item: 'モニター'},
-  {id: 3, item: 'キーボード'}
-];
+const INITIAL_COUNT = 0;
+const INITIAL_NAME = 'JavaScript';
 
-const CheckBtnItems = ({onChange, checked}) => 
-  values.map((value) => {
-    return (
-      <label key={value.id}>
-        <input type="checkbox" onChange={onChange} value={value.item} checked={checked[value.item]} />
-        {value.item}
-      </label>
-    );
-  });
+const SampleComponent = () => {
+  const [count, setCount] = useState(INITIAL_COUNT);
+  const [name, setName] = useState(INITIAL_NAME);
 
-// 複数のcheckedの状態をオブジェクトで管理する
-const InputCheckBox = () => {
-  // これも畳み込み演算
-  const [checkedValues, setCheckedValues] = useState(
-    values.reduce((acc, cur) => {
-      acc[cur.item] = false;
-      return acc;
-    }, {})
-  );
+  // 状態更新関数にコールバックを渡した場合、コールバックの第一引数に現在の値が渡される
+  const countIncrement = () => setCount((prev) => prev + 1);
+  const countDecrement = () => setCount((prev) => prev - 1);
+  const countReset = () => setCount(INITIAL_COUNT);
 
-  const handleChange = (event) => {
-    // この書き方面白い
-    // これまでセッションに格納されたオブジェクトと今回操作されたチェックボックスをマージした新しい状態を作っている
-    setCheckedValues({...checkedValues, [event.target.value]: event.target.checked});
-  };
-
-  // 畳み込み演算をしている
-  // checkedValuesに依存しているから変更の都度再計算される？
-  const stateOfCheckedValues = Object.entries(checkedValues).reduce((pre, [key, value]) => {
-    // 値がtrueの場合、そのキーを追加する
-    // if (value) { pre.push(key); } と同じ
-    value && pre.push(key);
-    return pre;
-  }, [] /* 初期値は空の配列. */);
+  const handleChangeName = (e) => setName(e.target.value);
 
   return (
     <div className="App">
       <p>
-        現在選択されている値: <b>{stateOfCheckedValues.join('、')}</b>
+        現在のカウント数: <b>{count}</b>
+        <br />
+        count の初期値: <b>{INITIAL_COUNT}</b>
       </p>
-      <CheckBtnItems onChange={handleChange} checked={checkedValues} />
+      <button onClick={countIncrement}>+</button>
+      <button onClick={countDecrement}>-</button>
+      <button onClick={countReset}>{INITIAL_COUNT}</button>
+
+      <p>
+        Hello, <b>{name} !!</b>
+        <br />
+        nameの初期値: <b>{INITIAL_NAME}</b>
+      </p>
+      <input type="text" onChange={handleChangeName} />
     </div>
   );
-}
+};
+
 
 export default function App() {
-  return <InputCheckBox />;
+  return <>
+    <SampleComponent />
+    <SampleComponent />
+  </>
 }
