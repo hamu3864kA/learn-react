@@ -1,41 +1,39 @@
 import React, { useState } from "react";
 import "./styles.css";
 
-const values = [
-  {id: 1, item: '赤'},
-  {id: 2, item: '青'},
-  {id: 3, item: '黄'},
-];
-// 親コンポーネントから受け取る
-// これは関数コンポーネントだとすると12行目にreturnがないと動作しないのでは？=> その通り
-// 余計な{}が入っていた。{}がなければ（式だけなら）勝手にreturnされる。
-const RadioBtnItems = ({onChange, checked}) => 
-  values.map((value) => {
-    return (
-      <label key={value.id}>
-        <input type="radio" value={value.item} onChange={onChange} checked={checked === value.item} />
-      </label>
-    );
-  });
-
-
-const InputRadio = () => {
-
-  const [checkedValue, setCheckedValue] = useState(values[0]['item']);
+const InputCheckBox = () => {
+  const [checkedValues, setCheckedValues] = useState([]);
   const handleChange = (event) => {
-    setCheckedValue(event.target.value);
+    if (checkedValues.includes(event.target.value)) {
+      // 要するにチェックが外された場合
+      setCheckedValues(checkedValues.filter((checkedValue) => checkedValue !== event.target.value));
+    } else {
+      // チェックが付けられた場合
+      setCheckedValues([...checkedValues, event.target.value]);
+    }
+
   }
   return (
-    <div class="App">
+    <div className="App">
       <p>
-        現在選択されている値: <b>{checkedValue}</b>
+        現在選択されている値: <b>{checkedValues.join('、')}</b>
       </p>
-      <RadioBtnItems onChange={handleChange} checked={checkedValue} />
+      <label>
+        <input type="checkbox" value="マウス" onChange={handleChange} checked={checkedValues.includes('マウス')}/>
+        マウス
+      </label>
+      <label >
+        <input type="checkbox" value="モニター" onChange={handleChange} checked={checkedValues.includes('モニター')}/>
+        モニター
+      </label>
+      <label >
+        <input type="checkbox" value="キーボード" onChange={handleChange} checked={checkedValues.includes('キーボード')}/>
+        キーボード
+      </label>
     </div>
-
   );
-};
+}
 
 export default function App() {
-  return <InputRadio />;
+  return <InputCheckBox />;
 }
