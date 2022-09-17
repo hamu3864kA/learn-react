@@ -1,13 +1,31 @@
 import React, { useState } from "react";
 import "./styles.css";
 
+const values = [
+  {id: 1, item: 'マウス'},
+  {id: 2, item: 'モニター'},
+  {id: 3, item: 'キーボード'}
+];
+
+const CheckBtnItems = ({onChange, checked}) => 
+  values.map((value) => {
+    return (
+      <label key={value.id}>
+        <input type="checkbox" onChange={onChange} value={value.item} checked={checked[value.item]} />
+        {value.item}
+      </label>
+    );
+  });
+
 // 複数のcheckedの状態をオブジェクトで管理する
 const InputCheckBox = () => {
-  const [checkedValues, setCheckedValues] = useState({
-    'マウス' : false,
-    'モニター' : false,
-    'キーボード' : false
-  });
+  // これも畳み込み演算
+  const [checkedValues, setCheckedValues] = useState(
+    values.reduce((acc, cur) => {
+      acc[cur.item] = false;
+      return acc;
+    }, {})
+  );
 
   const handleChange = (event) => {
     // この書き方面白い
@@ -29,18 +47,7 @@ const InputCheckBox = () => {
       <p>
         現在選択されている値: <b>{stateOfCheckedValues.join('、')}</b>
       </p>
-      <label>
-        <input type="checkbox" value="マウス" onChange={handleChange} checked={checkedValues['マウス']} />
-        マウス
-      </label>
-      <label>
-        <input type="checkbox" value="モニター" onChange={handleChange} checked={checkedValues['モニター']} />
-        モニター
-      </label>
-      <label>
-        <input type="checkbox" value="キーボード" onChange={handleChange} checked={checkedValues['キーボード']} />
-        キーボード
-      </label>
+      <CheckBtnItems onChange={handleChange} checked={checkedValues} />
     </div>
   );
 }
