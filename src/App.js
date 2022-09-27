@@ -1,66 +1,44 @@
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import "./styles.css";
 
-// CounterResultコンポーネント（子）を作成
-// Counterコンポーネント（親）から `text` と `countState` をpropとして
-// 受け取っている CounterResultコンポーネント（子）を `React.memo()` でラップ
-const CountResult = React.memo(({text, countState}) => {
-  // Counterコンポーネント（親）のボタンがクリックされて
-  // Counterコンポーネント（親）の持つ `countState` が更新されたら
-  // CounterResultコンポーネント（子）が再レンダリングされる
-  // - 逆に言えば引数が変わらない限りは再レンダリングはされないということ
-  console.log(`${text}ボタンがクリックされました`);
-  // 内部でさらに `useState` とかしちゃうと結局再度レンダリングが発生してしまう
-  return(
-    <p>
-      {text} : {countState}
-    </p>
-  );
+// 5-28 p230
+
+// とりあえずのメモ化
+const Button = React.memo(({counterState, buttonValue}) => {
+  console.log(`${buttonValue}がクリックされました`);
+  return <button onClick={counterState}>{buttonValue}</button>;
 });
 
-const NoWrapCountResult = ({text, countState}) => {
-  console.log(`${text}ボタンがクリックされました`);
-  return (
-    <p>
-      {text} : {countState}
-    </p>
-  );
-};
-
-// countStateA/countStateBはCounterで状態管理している
-// ので、変更があった場合、本来はCounter及びCounterResult両方とも再レンダリングされるはずだが
-// memo化しているのでボタンが押された方しか再レンダリングされない、と
 const Counter = () => {
   const [countStateA, setCountStateA] = useState(0);
   const [countStateB, setCountStateB] = useState(0);
   const [countStateC, setCountStateC] = useState(0);
 
-  const countIncrementA = () => {
-    setCountStateA((prevCount) => prevCount + 1);
-  };
-
-  const countIncrementB = () => {
-    setCountStateB((prevCount) => prevCount + 1);
-  };
-
+  const countIncrementA = useCallback(() => 
+    setCountStateA(countStateA + 1), [countStateA]);
+  const countIncrementB = useCallback(() =>
+    setCountStateB(countStateB + 1), [countStateB]);
   const countIncrementC = () => {
-    setCountStateC((prevCount) => prevCount + 1);
+    setCountStateC(countStateC + 1);
   };
 
-  console.log('親コンポーネントがレンダリングされました');
-
-  return (
+  return(
     <>
-      <CountResult text="Aボタン" countState={countStateA} />
-      <CountResult text="Bボタン" countState={countStateB} />
-      <NoWrapCountResult text="Cボタン" countState={countStateC} />
-      <button onClick={countIncrementA}>A ボタン</button>
-      <button onClick={countIncrementB}>B ボタン</button>
-      <button onClick={countIncrementC}>C ボタン</button> {/* こいつはラップされていないので常に再レンダリングされる */}
+      <p>A ボタン {countStateA}</p>
+      <p>B ボタン {countStateB}</p>
+      <p>C ボタン {countStateC}</p>
+
+      <Button counterState={countIncrementA} buttonValue="A ボタン" />
+      <Button counterState={countIncrementB} buttonValue="B ボタン" />
+      <Button counterState={countIncrementC} buttonValue="C ボタン" />
     </>
   );
-}
+};
 
 export default function App() {
   return <Counter />
 }
+
+// あくまで子には関数のみ渡している
+// 関数を通して、親が持っている状態countStateXが変更されるので親が再レンダリング
+// でも関数自体が依存しているcountStateXが変更されていない子コンポーネントには影響がない
