@@ -1,44 +1,66 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import "./styles.css";
 
-const INITIAL_COUNT = 0;
+// CounterResultコンポーネント（子）を作成
+// Counterコンポーネント（親）から `text` と `countState` をpropとして
+// 受け取っている CounterResultコンポーネント（子）を `React.memo()` でラップ
+const CountResult = React.memo(({text, countState}) => {
+  // Counterコンポーネント（親）のボタンがクリックされて
+  // Counterコンポーネント（親）の持つ `countState` が更新されたら
+  // CounterResultコンポーネント（子）が再レンダリングされる
+  // - 逆に言えば引数が変わらない限りは再レンダリングはされないということ
+  console.log(`${text}ボタンがクリックされました`);
+  // 内部でさらに `useState` とかしちゃうと結局再度レンダリングが発生してしまう
+  return(
+    <p>
+      {text} : {countState}
+    </p>
+  );
+});
 
-const Timer = () => {
-  const [count, setCount] = useState(INITIAL_COUNT);
-  const countReset = () => setCount(INITIAL_COUNT);
-  const countIncrement = () => {
-    setCount((prevCount) => prevCount + 1);
-    console.log('カウントアップ　+1');
-  };
-
-  const callbackFunction = () => {
-    alert('副作用関数が実行されました！');
-    const timer = setInterval(countIncrement, 1000);
-    return () => {
-      console.log('タイマーが削除されました!!');
-      clearInterval(timer);
-    };
-  };
-
-  useEffect(callbackFunction, []);
-
+const NoWrapCountResult = ({text, countState}) => {
+  console.log(`${text}ボタンがクリックされました`);
   return (
-    <div className="App">
-      <p>現在のカウント数: <b>{count}</b></p>
-      <button onClick={countReset}>RESET</button>
-    </div>
+    <p>
+      {text} : {countState}
+    </p>
   );
 };
 
-export default function App() {
-  const [display, toggleDisplay] = useState(false);
-  const handleToggleDisplay = () => toggleDisplay(!display);
+// countStateA/countStateBはCounterで状態管理している
+// ので、変更があった場合、本来はCounter及びCounterResult両方とも再レンダリングされるはずだが
+// memo化しているのでボタンが押された方しか再レンダリングされない、と
+const Counter = () => {
+  const [countStateA, setCountStateA] = useState(0);
+  const [countStateB, setCountStateB] = useState(0);
+  const [countStateC, setCountStateC] = useState(0);
+
+  const countIncrementA = () => {
+    setCountStateA((prevCount) => prevCount + 1);
+  };
+
+  const countIncrementB = () => {
+    setCountStateB((prevCount) => prevCount + 1);
+  };
+
+  const countIncrementC = () => {
+    setCountStateC((prevCount) => prevCount + 1);
+  };
+
+  console.log('親コンポーネントがレンダリングされました');
+
   return (
     <>
-      <button onClick={handleToggleDisplay}>
-        {display ? 'タイマーを非表示' : 'タイマーを表示'}
-      </button>
-      {display && <Timer />}
+      <CountResult text="Aボタン" countState={countStateA} />
+      <CountResult text="Bボタン" countState={countStateB} />
+      <NoWrapCountResult text="Cボタン" countState={countStateC} />
+      <button onClick={countIncrementA}>A ボタン</button>
+      <button onClick={countIncrementB}>B ボタン</button>
+      <button onClick={countIncrementC}>C ボタン</button> {/* こいつはラップされていないので常に再レンダリングされる */}
     </>
   );
+}
+
+export default function App() {
+  return <Counter />
 }
